@@ -1,0 +1,20 @@
+---
+title: "esm206_lab7"
+author: "Katheryn Moya"
+date: "11/9/2021"
+output: html_document
+---
+
+```{r setup, include=TRUE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(palmerpenguins)
+library(GGally)
+library(broom)
+library(modelsummary)
+library(stargazer)
+```
+
+
+
