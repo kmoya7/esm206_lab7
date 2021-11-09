@@ -123,3 +123,17 @@ plot(model_2)
 ```
  
  
+Use modelsummary()
+```{r}
+modelsummary(model_2)
+```
+ 
+ Use stargazer:
+ 
+```{r, results = "asis"}
+# this lets handock know the outcome of this code is already in html
+
+stargazer(model_2, type = "html")
+```
+ 
+ 
