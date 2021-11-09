@@ -17,4 +17,109 @@ library(stargazer)
 ```
 
 
+## Explore penguins
 
+```{r}
+
+ggpairs(penguins)
+#tells you the different variations of graphs that you can show your variable through
+```
+
+That's kind of overkill. Let's simplify the variables that we include in our ggpairs plot:
+- species
+- bill_length_mm through body_mass_g
+
+```{r}
+penguins %>% 
+  select(species, bill_length_mm:body_mass_g) %>%  #colon keeps the whole sequence in the range
+  ggpairs(aes(color = species))
+
+```
+  Scatterplots are allowing us to explore the multivariate relationships between any two variables
+  when you look at these relationships between these continuous variables and the other ones, does it look like a linear relationship would make sense?
+  
+## Multiple linear regression
+
+We are going to try to understand (a bit better) relationships between multiple predictor variables and an outcome which is penguin body mass.
+
+The different predictor variables we're going to try are:
+- species
+- flipper length
+- sex
+- bill depth
+
+### Model 1
+
+Model body mass based on only flipper length and bill depth (bad idea... there are more important variables missing)
+- based on the ggpairs, can influence the variables that you choose to use in your models
+
+```{r}
+model_1 <- lm(body_mass_g ~ flipper_length_mm + bill_depth_mm, data = penguins) #need to add dataset at the end
+
+# Call model by name to return only coefficients
+model_1
+
+# gives y intercept and coefficients for both variables - gives you the equation
+# 54.14 for every increase in by 1 mm, we expect on average for  if everything else stays constant  
+
+# More information on the coefficients and model:
+
+summary(model_1)
+```
+If everything else is held constant, we expect that for each 1mm increase in flipper length, penguin body mass increases by 51.54 g, on average
+
+8% chance we could've gotten a coefficient at least as different as the one we got - retaining null hypothesis
+
+what does .7596 mean for this model == 76% of variants in penguin body mass is explained by this model(which contains these two variables)/ penguin flipper length and bill depth
+  means that 24% of the variance is not explained by these variables
+  is this good or bad? NEITHER, it is what it is
+Actually, I don't think that this is an actually good model because other variables have a greater impact on penguin body mass
+
+```{r}
+model_2 <- lm(body_mass_g ~ flipper_length_mm + sex + species, data = penguins)
+
+#find out coefficients
+model_2
+
+
+```
+
+What has R assigned as the reference level penguin species -- adelie was assigned 0, female as sex
+
+try interpreting the coefficients for:
+flipper length, gentoo, and male
+
+For every male, we expect that penguin body mass increases by 530.4 g, on average larger than a female given that everything else is held constant
+
+## Visualize this models
+
+```{r}
+ggplot(data = penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  facet_wrap(~ sex)
+```
+
+## A couple ways to get & report MLR model outcomes
+
+use broom:`tidy()` to get the model coefficient info in a tidy data frame.
+
+```{r}
+penguin_model_2_coef <- tidy(model_2)
+penguin_model_2_coef
+```
+
+ Try to write inline code `r` that spits out the coefficietn for Gentoo.
+ 
+ `r penguin_model_2_coef$estimate[4]` 
+ 
+ [4] is for the fourth variable
+ 
+ ## Look at model diagnostics
+ 
+ Use the plot() functon
+ 
+```{r}
+plot(model_2)
+```
+ 
+ 
